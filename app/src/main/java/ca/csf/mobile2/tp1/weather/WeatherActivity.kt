@@ -24,18 +24,17 @@ class WeatherActivity : AppCompatActivity() {
         val temperatureTextView = findViewById<TextView>(R.id.temperatureTextView)
         temperatureTextView.visibility = View.VISIBLE
 
-        var weather : String? = null
+        var weather : Weather? = null
 
         val queue = Volley.newRequestQueue(this)
         val stringRequest = StringRequest(Request.Method.GET, URL,
             Response.Listener<String> { response ->
-                weather = response!!
+                weather = Klaxon().parse<Weather>(response)
+                temperatureTextView.text = weather?.temperatureInCelsius.toString()
             },
             Response.ErrorListener { /*Didnt work*/ })
 
         queue.add(stringRequest)
-
-        temperatureTextView.text = weather
     }
 
 }
