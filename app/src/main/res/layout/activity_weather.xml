@@ -7,18 +7,18 @@
     tools:context=".weather.WeatherActivity">
 
     <ImageView
-        android:id="@+id/weatherPreviewImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="24dp"
-        android:adjustViewBounds="true"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="@+id/temperatureTextView"
-        app:layout_constraintEnd_toStartOf="@+id/temperatureTextView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/temperatureTextView"
-        app:srcCompat="@drawable/ic_sunny" />
+            android:id="@+id/weatherPreviewImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            android:adjustViewBounds="true"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/temperatureTextView"
+            app:layout_constraintEnd_toStartOf="@+id/temperatureTextView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/temperatureTextView"
+            app:srcCompat="@drawable/ic_sunny"/>
 
     <TextView
         android:id="@+id/temperatureTextView"

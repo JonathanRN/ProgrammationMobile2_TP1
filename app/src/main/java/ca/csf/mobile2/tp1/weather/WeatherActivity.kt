@@ -75,11 +75,11 @@ class WeatherActivity : AppCompatActivity() {
 
         weatherPreviewImage.visibility = View.VISIBLE
         when(weather?.type){
-            WeatherType.SUNNY -> weatherPreviewImage.setBackgroundResource(R.drawable.ic_sunny)
-            WeatherType.CLOUDY -> weatherPreviewImage.setBackgroundResource(R.drawable.ic_cloudy)
-            WeatherType.PARTLY_SUNNY -> weatherPreviewImage.setBackgroundResource(R.drawable.ic_partly_sunny)
-            WeatherType.RAIN -> weatherPreviewImage.setBackgroundResource(R.drawable.ic_rain)
-            WeatherType.SNOW -> weatherPreviewImage.setBackgroundResource(R.drawable.ic_snow)
+            WeatherType.SUNNY -> weatherPreviewImage.setImageResource(R.drawable.ic_sunny)
+            WeatherType.CLOUDY -> weatherPreviewImage.setImageResource(R.drawable.ic_cloudy)
+            WeatherType.PARTLY_SUNNY -> weatherPreviewImage.setImageResource(R.drawable.ic_partly_sunny)
+            WeatherType.RAIN -> weatherPreviewImage.setImageResource(R.drawable.ic_rain)
+            WeatherType.SNOW -> weatherPreviewImage.setImageResource(R.drawable.ic_snow)
         }
 
     }
