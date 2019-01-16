@@ -3,12 +3,17 @@ package ca.csf.mobile2.tp1.weather
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
 import ca.csf.mobile2.tp1.R
 import com.beust.klaxon.Klaxon
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import java.net.HttpURLConnection
 import java.net.URL
+import android.net.ConnectivityManager
+import android.content.Context
 
 const val WEATHER_URL = "https://m2t1.csfpwmjv.tk/api/v1/weather"
 const val STATE_WEATHER = "STATE_WEATHER"
@@ -16,8 +21,12 @@ const val STATE_WEATHER = "STATE_WEATHER"
 class WeatherActivity : AppCompatActivity() {
 
     private var weather: Weather? = null
+
     private lateinit var temperatureTextView: TextView
     private lateinit var cityTextView: TextView
+    private lateinit var progressBar: ProgressBar
+    private lateinit var errorTextView: TextView
+    private lateinit var errorImageView: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +34,9 @@ class WeatherActivity : AppCompatActivity() {
 
         temperatureTextView = findViewById(R.id.temperatureTextView)
         cityTextView = findViewById(R.id.cityTextView)
+        progressBar = findViewById(R.id.progressBar)
+        errorTextView = findViewById(R.id.errorTextView)
+        errorImageView = findViewById(R.id.errorImageView)
     }
 
     override fun onResume() {
@@ -48,26 +60,53 @@ class WeatherActivity : AppCompatActivity() {
     }
 
     private fun sendRequest() {
+        progressBar.visibility = View.VISIBLE
+
         doAsync {
-            val response = URL(WEATHER_URL).readText()
+            val url = URL(WEATHER_URL)
+            val httpClient = url.openConnection() as HttpURLConnection
+            var response = ""
+
+            if (isNetworkAvailable() && httpClient.responseCode == HttpURLConnection.HTTP_OK) {
+                response = url.readText()
+            }
             uiThread {
                 if (response.isNotBlank()) {
                     weather = Klaxon().parse<Weather>(response)!!
-
-                    if (response.isNotBlank()) {
-                        showWeather()
-                    }
+                    showWeather()
+                }
+                else {
+                    showErrorScreen()
                 }
             }
         }
     }
 
     private fun showWeather() {
+        errorImageView.visibility = View.INVISIBLE
+        errorTextView.visibility = View.INVISIBLE
+
         temperatureTextView.visibility = View.VISIBLE
         cityTextView.visibility = View.VISIBLE
+        progressBar.visibility = View.INVISIBLE
 
         temperatureTextView.text = weather?.temperatureInCelsius.toString()
         cityTextView.text = weather?.city
+    }
+
+    private fun showErrorScreen() {
+        errorImageView.visibility = View.VISIBLE
+        errorTextView.visibility = View.VISIBLE
+
+        temperatureTextView.visibility = View.INVISIBLE
+        cityTextView.visibility = View.INVISIBLE
+        progressBar.visibility = View.INVISIBLE
+    }
+
+    private fun isNetworkAvailable(): Boolean {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetworkInfo = connectivityManager.activeNetworkInfo
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected
     }
 
     fun onRetryButtonClick(view : View) {
