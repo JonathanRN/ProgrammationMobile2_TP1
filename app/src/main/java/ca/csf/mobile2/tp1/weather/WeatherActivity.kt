@@ -15,7 +15,7 @@ const val STATE_WEATHER = "STATE_WEATHER"
 
 class WeatherActivity : AppCompatActivity() {
 
-    private lateinit var weather: Weather
+    private var weather: Weather? = null
     private lateinit var temperatureTextView: TextView
     private lateinit var cityTextView: TextView
 
@@ -25,8 +25,13 @@ class WeatherActivity : AppCompatActivity() {
 
         temperatureTextView = findViewById(R.id.temperatureTextView)
         cityTextView = findViewById(R.id.cityTextView)
+    }
 
-        sendRequest()
+    override fun onResume() {
+        super.onResume()
+        if (weather == null) {
+            sendRequest()
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -61,8 +66,8 @@ class WeatherActivity : AppCompatActivity() {
         temperatureTextView.visibility = View.VISIBLE
         cityTextView.visibility = View.VISIBLE
 
-        temperatureTextView.text = weather.temperatureInCelsius.toString()
-        cityTextView.text = weather.city
+        temperatureTextView.text = weather?.temperatureInCelsius.toString()
+        cityTextView.text = weather?.city
     }
 
     fun onRetryButtonClick(view : View) {
