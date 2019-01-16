@@ -11,10 +11,11 @@ import org.jetbrains.anko.uiThread
 import java.net.URL
 
 const val WEATHER_URL = "https://m2t1.csfpwmjv.tk/api/v1/weather"
+const val STATE_WEATHER = "STATE_WEATHER"
 
 class WeatherActivity : AppCompatActivity() {
 
-    private var weather: Weather? = null
+    private lateinit var weather: Weather
     private lateinit var temperatureTextView: TextView
     private lateinit var cityTextView: TextView
 
@@ -28,6 +29,19 @@ class WeatherActivity : AppCompatActivity() {
         sendRequest()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putParcelable(STATE_WEATHER, weather)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+
+        weather = savedInstanceState.getParcelable(STATE_WEATHER) ?: weather
+        showWeather()
+    }
+
     private fun sendRequest() {
         doAsync {
             val response = URL(WEATHER_URL).readText()
@@ -35,7 +49,7 @@ class WeatherActivity : AppCompatActivity() {
                 if (response.isNotBlank()) {
                     weather = Klaxon().parse<Weather>(response)!!
 
-                    if (weather != null) {
+                    if (response.isNotBlank()) {
                         showWeather()
                     }
                 }
@@ -47,8 +61,8 @@ class WeatherActivity : AppCompatActivity() {
         temperatureTextView.visibility = View.VISIBLE
         cityTextView.visibility = View.VISIBLE
 
-        temperatureTextView.text = weather?.temperatureInCelsius.toString()
-        cityTextView.text = weather?.city
+        temperatureTextView.text = weather.temperatureInCelsius.toString()
+        cityTextView.text = weather.city
     }
 
     fun onRetryButtonClick(view : View) {
