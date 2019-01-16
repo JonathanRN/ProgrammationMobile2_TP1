@@ -3,10 +3,12 @@ package ca.csf.mobile2.tp1.weather
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import ca.csf.mobile2.tp1.R
 import com.beust.klaxon.Klaxon
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.image
 import org.jetbrains.anko.uiThread
 import java.net.URL
 
@@ -18,6 +20,7 @@ class WeatherActivity : AppCompatActivity() {
     private var weather: Weather? = null
     private lateinit var temperatureTextView: TextView
     private lateinit var cityTextView: TextView
+    private lateinit var weatherPreviewImage: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +28,7 @@ class WeatherActivity : AppCompatActivity() {
 
         temperatureTextView = findViewById(R.id.temperatureTextView)
         cityTextView = findViewById(R.id.cityTextView)
+        weatherPreviewImage = findViewById(R.id.weatherPreviewImageView)
     }
 
     override fun onResume() {
@@ -68,6 +72,16 @@ class WeatherActivity : AppCompatActivity() {
 
         temperatureTextView.text = weather?.temperatureInCelsius.toString()
         cityTextView.text = weather?.city
+
+        weatherPreviewImage.visibility = View.VISIBLE
+        when(weather?.type){
+            WeatherType.SUNNY -> weatherPreviewImage.setBackgroundResource(R.drawable.ic_sunny)
+            WeatherType.CLOUDY -> weatherPreviewImage.setBackgroundResource(R.drawable.ic_cloudy)
+            WeatherType.PARTLY_SUNNY -> weatherPreviewImage.setBackgroundResource(R.drawable.ic_partly_sunny)
+            WeatherType.RAIN -> weatherPreviewImage.setBackgroundResource(R.drawable.ic_rain)
+            WeatherType.SNOW -> weatherPreviewImage.setBackgroundResource(R.drawable.ic_snow)
+        }
+
     }
 
     fun onRetryButtonClick(view : View) {
