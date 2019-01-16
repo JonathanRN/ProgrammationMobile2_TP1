@@ -67,30 +67,38 @@ class WeatherActivity : AppCompatActivity() {
         doAsync {
             val url = URL(WEATHER_URL)
             val httpClient = url.openConnection() as HttpURLConnection
-            var response = ""
+            var response: String = ""
+            var noInternetConnection : Boolean = false
 
-            if (isNetworkAvailable() && httpClient.responseCode == HttpURLConnection.HTTP_OK) {
+            if (!isNetworkAvailable()) {
+                noInternetConnection = true
+            }
+            else if(httpClient.responseCode != HttpURLConnection.HTTP_OK) {
+                noInternetConnection = false
+            }
+            else {
                 response = url.readText()
             }
+
             uiThread {
                 if (response.isNotBlank()) {
                     weather = Klaxon().parse<Weather>(response)!!
                     showWeather()
                 }
                 else {
-                    showErrorScreen()
+                    showErrorScreen(noInternetConnection)
                 }
             }
         }
     }
 
     private fun showWeather() {
+        progressBar.visibility = View.INVISIBLE
         errorImageView.visibility = View.INVISIBLE
         errorTextView.visibility = View.INVISIBLE
 
         temperatureTextView.visibility = View.VISIBLE
         cityTextView.visibility = View.VISIBLE
-        progressBar.visibility = View.INVISIBLE
 
         temperatureTextView.text = weather?.temperatureInCelsius.toString()
         cityTextView.text = weather?.city
@@ -106,7 +114,7 @@ class WeatherActivity : AppCompatActivity() {
 
     }
 
-    private fun showErrorScreen() {
+    private fun showErrorScreen(noInternetConnection : Boolean) {
         errorImageView.visibility = View.VISIBLE
         errorTextView.visibility = View.VISIBLE
 
@@ -114,6 +122,13 @@ class WeatherActivity : AppCompatActivity() {
         cityTextView.visibility = View.INVISIBLE
         progressBar.visibility = View.INVISIBLE
         weatherPreviewImage.visibility = View.INVISIBLE
+
+        if (noInternetConnection) {
+            errorTextView.text = getString(R.string.error_connectivity)
+        }
+        else {
+            errorTextView.text = getString(R.string.error_server)
+        }
     }
 
     private fun isNetworkAvailable(): Boolean {
