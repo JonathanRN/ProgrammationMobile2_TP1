@@ -27,6 +27,7 @@ class WeatherActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
     private lateinit var errorTextView: TextView
     private lateinit var errorImageView: ImageView
+    private lateinit var weatherPreviewImage: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +38,7 @@ class WeatherActivity : AppCompatActivity() {
         progressBar = findViewById(R.id.progressBar)
         errorTextView = findViewById(R.id.errorTextView)
         errorImageView = findViewById(R.id.errorImageView)
+        weatherPreviewImage = findViewById(R.id.weatherPreviewImageView)
     }
 
     override fun onResume() {
@@ -92,6 +94,16 @@ class WeatherActivity : AppCompatActivity() {
 
         temperatureTextView.text = weather?.temperatureInCelsius.toString()
         cityTextView.text = weather?.city
+
+        weatherPreviewImage.visibility = View.VISIBLE
+        when(weather?.type){
+            WeatherType.SUNNY -> weatherPreviewImage.setBackgroundResource(R.drawable.ic_sunny)
+            WeatherType.CLOUDY -> weatherPreviewImage.setBackgroundResource(R.drawable.ic_cloudy)
+            WeatherType.PARTLY_SUNNY -> weatherPreviewImage.setBackgroundResource(R.drawable.ic_partly_sunny)
+            WeatherType.RAIN -> weatherPreviewImage.setBackgroundResource(R.drawable.ic_rain)
+            WeatherType.SNOW -> weatherPreviewImage.setBackgroundResource(R.drawable.ic_snow)
+        }
+
     }
 
     private fun showErrorScreen() {
@@ -101,6 +113,7 @@ class WeatherActivity : AppCompatActivity() {
         temperatureTextView.visibility = View.INVISIBLE
         cityTextView.visibility = View.INVISIBLE
         progressBar.visibility = View.INVISIBLE
+        weatherPreviewImage.visibility = View.INVISIBLE
     }
 
     private fun isNetworkAvailable(): Boolean {
