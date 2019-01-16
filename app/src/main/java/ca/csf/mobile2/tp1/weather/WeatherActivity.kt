@@ -28,10 +28,6 @@ class WeatherActivity : AppCompatActivity() {
         cityTextView = findViewById(R.id.cityTextView)
 
         sendRequest()
-
-        while(temperatureTextView?.visibility == View.INVISIBLE) {
-            println("waiting")
-        }
     }
 
 
