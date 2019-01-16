@@ -10,15 +10,13 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import java.net.URL
 
+const val WEATHER_URL = "https://m2t1.csfpwmjv.tk/api/v1/weather"
+
 class WeatherActivity : AppCompatActivity() {
 
-    companion object {
-        const val WEATHER_URL = "https://m2t1.csfpwmjv.tk/api/v1/weather"
-    }
-
-    var weather : Weather? = null
-    var temperatureTextView : TextView? = null
-    var cityTextView : TextView? = null
+    private var weather: Weather? = null
+    private lateinit var temperatureTextView: TextView
+    private lateinit var cityTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,20 +28,30 @@ class WeatherActivity : AppCompatActivity() {
         sendRequest()
     }
 
-
-    fun sendRequest() {
+    private fun sendRequest() {
         doAsync {
             val response = URL(WEATHER_URL).readText()
             uiThread {
                 if (response.isNotBlank()) {
-                    temperatureTextView?.visibility = View.VISIBLE
-                    cityTextView?.visibility = View.VISIBLE
-
                     weather = Klaxon().parse<Weather>(response)!!
-                    temperatureTextView?.text = weather?.temperatureInCelsius.toString()
-                    cityTextView?.text = weather?.city
+
+                    if (weather != null) {
+                        showWeather()
+                    }
                 }
             }
         }
+    }
+
+    private fun showWeather() {
+        temperatureTextView.visibility = View.VISIBLE
+        cityTextView.visibility = View.VISIBLE
+
+        temperatureTextView.text = weather?.temperatureInCelsius.toString()
+        cityTextView.text = weather?.city
+    }
+
+    fun onRetryButtonClick(view : View) {
+        sendRequest()
     }
 }
