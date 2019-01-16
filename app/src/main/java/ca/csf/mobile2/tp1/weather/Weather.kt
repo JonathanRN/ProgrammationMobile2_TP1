@@ -4,4 +4,4 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-class Weather(val type : String, val temperatureInCelsius : Int, val city : String) : Parcelable
+class Weather(val type : WeatherType, val temperatureInCelsius : Int, val city : String) : Parcelable
