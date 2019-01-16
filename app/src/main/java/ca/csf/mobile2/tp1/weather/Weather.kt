@@ -3,17 +3,17 @@ package ca.csf.mobile2.tp1.weather
 import android.os.Parcel
 import android.os.Parcelable
 
-class Weather(val type : String, val temperatureInCelsius : Int, val city : String) : Parcelable {
+data class Weather(val type : WeatherType, val temperatureInCelsius : Int, val city : String) : Parcelable {
 
     constructor(parcel: Parcel) : this(
-        parcel.readString(),
+        WeatherType.values()[parcel.readInt()],
         parcel.readInt(),
         parcel.readString()
     ) {
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(type)
+        parcel.writeInt(type.ordinal)
         parcel.writeInt(temperatureInCelsius)
         parcel.writeString(city)
     }
