@@ -15,8 +15,9 @@ import java.net.URL
 import android.net.ConnectivityManager
 import android.content.Context
 
-const val WEATHER_URL = "https://m2t1.csfpwmjv.tk/api/v1/weather"
+const val WEATHER_URL = "https://m2t1.csfpwmjv.tk/api/v1/toto"
 const val STATE_WEATHER = "STATE_WEATHER"
+const val STATE_ERROR_BOOLEAN = "STATE_ERROR_BOOLEAN"
 
 class WeatherActivity : AppCompatActivity() {
 
@@ -28,6 +29,10 @@ class WeatherActivity : AppCompatActivity() {
     private lateinit var errorTextView: TextView
     private lateinit var errorImageView: ImageView
     private lateinit var weatherPreviewImage: ImageView
+
+    private var noInternetConnection : Boolean = false
+    private var isErrorScreenShowing : Boolean = false
+        get() = errorTextView.visibility == View.VISIBLE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,13 +57,24 @@ class WeatherActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
 
         outState.putParcelable(STATE_WEATHER, weather)
+
+        if (isErrorScreenShowing) {
+            outState.putBoolean(STATE_ERROR_BOOLEAN, noInternetConnection)
+        }
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
 
         weather = savedInstanceState.getParcelable(STATE_WEATHER) ?: weather
-        showWeather()
+
+        if (savedInstanceState.containsKey(STATE_ERROR_BOOLEAN)) {
+            noInternetConnection = savedInstanceState.getBoolean(STATE_ERROR_BOOLEAN)
+            showErrorScreen(noInternetConnection)
+        }
+        else {
+            showWeather()
+        }
     }
 
     private fun sendRequest() {
@@ -68,7 +84,6 @@ class WeatherActivity : AppCompatActivity() {
             val url = URL(WEATHER_URL)
             val httpClient = url.openConnection() as HttpURLConnection
             var response: String = ""
-            var noInternetConnection : Boolean = false
 
             if (!isNetworkAvailable()) {
                 noInternetConnection = true
